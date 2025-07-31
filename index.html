@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Card Tracking System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        color: #2c3e50;
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .search-bar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input[type="text"] {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        flex: 1;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+      }
+
+      .card-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .card-type {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .card-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .status-active {
+        background-color: #2ecc71;
+        color: white;
+      }
+
+      .status-pending {
+        background-color: #f1c40f;
+        color: white;
+      }
+
+      .card-details {
+        margin-top: 15px;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .detail-label {
+        color: #7f8c8d;
+      }
+
+      .tracking-info {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .tracking-step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .step-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #3498db;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .step-complete {
+        background-color: #2ecc71;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Card Tracking System</h1>
+        <div class="search-bar">
+          <input type="text" placeholder="Search cards..." />
+          <button>Search</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="card-list">
+        <!-- Credit Card Example -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-type">Credit Card</span>
+            <span class="card-status status-active">Active</span>
+          </div>
+          <div class="card-details">
+            <div class="detail-row">
+              <span class="detail-label">Card Number</span>
+              <span>**** **** **** 1234</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Expiry Date</span>
+              <span>12/25</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Cardholder</span>
+              <span>John Doe</span>
+            </div>
+          </div>
+          <div class="tracking-info">
+            <div class="tracking-step">
+              <div class="step-dot step-complete"></div>
+              <span>Card Issued</span>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot step-complete"></div>
+              <span>In Transit</span>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot"></div>
+              <span>Delivered</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Debit Card Example -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-type">Debit Card</span>
+            <span class="card-status status-pending">Pending</span>
+          </div>
+          <div class="card-details">
+            <div class="detail-row">
+              <span class="detail-label">Card Number</span>
+              <span>**** **** **** 5678</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Expiry Date</span>
+              <span>09/24</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Cardholder</span>
+              <span>Jane Smith</span>
+            </div>
+          </div>
+          <div class="tracking-info">
+            <div class="tracking-step">
+              <div class="step-dot step-complete"></div>
+              <span>Card Issued</span>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot"></div>
+              <span>In Transit</span>
+            </div>
+            <div class="tracking-step">
+              <div class="step-dot"></div>
+              <span>Delivered</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
