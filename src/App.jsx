@@ -26,11 +26,22 @@ function App() {
         (() => {
           const Component = pageComponents[currentPage];
           if (Component) {
-            return <Component onNavigate={handleNavigation} />;
+            // Pass currentPage to all components that need it
+            return (
+              <Component
+                onNavigate={handleNavigation}
+                currentPage={currentPage}
+              />
+            );
           }
           // Default to dashboard if no component found
           const DashboardComponent = pageComponents["dashboard"];
-          return <DashboardComponent onNavigate={handleNavigation} />;
+          return (
+            <DashboardComponent
+              onNavigate={handleNavigation}
+              currentPage="dashboard"
+            />
+          );
         })()
       ) : tab === "scanning" ? (
         <CrescentUnionBankScanningPage isAlternateFlow={isAlternateFlow} />

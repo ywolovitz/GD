@@ -6,17 +6,40 @@ import {
 } from "@heroicons/react/24/outline";
 import { navigationConfig, hasPageComponent } from "../config/navigationConfig";
 
-const MainNavigationLayout = ({ children, onNavigate }) => {
-  const [expandedMenus, setExpandedMenus] = useState({
-    production: false,
-    reports: false,
-    supervisor: false,
-  });
+const MainNavigationLayout = ({ children, onNavigate, currentPage }) => {
+  // Auto-expand the menu that contains the current page
+  const getInitialExpandedState = () => {
+    const state = {
+      production: false,
+      reports: false,
+      supervisor: false,
+      courier: false,
+      systemConfig: false,
+    };
+
+    if (currentPage) {
+      if (navigationConfig.production.includes(currentPage)) {
+        state.production = true;
+      } else if (navigationConfig.reports.includes(currentPage)) {
+        state.reports = true;
+      } else if (navigationConfig.supervisor.includes(currentPage)) {
+        state.supervisor = true;
+      } else if (navigationConfig.courier.includes(currentPage)) {
+        state.courier = true;
+      } else if (navigationConfig.systemConfig.includes(currentPage)) {
+        state.systemConfig = true;
+      }
+    }
+
+    return state;
+  };
+
+  const [expandedMenus, setExpandedMenus] = useState(getInitialExpandedState());
 
   const toggleMenu = (menuName) => {
     setExpandedMenus((prev) => ({
       ...prev,
-      [menuName]: !prev[menuName],
+      [menuName.toLowerCase()]: !prev[menuName.toLowerCase()],
     }));
   };
 
@@ -32,7 +55,16 @@ const MainNavigationLayout = ({ children, onNavigate }) => {
       hasSubMenu: true,
       subMenus: navigationConfig.supervisor,
     },
-    { name: "Courier Functions", hasSubMenu: false },
+    {
+      name: "Courier Functions",
+      hasSubMenu: true,
+      subMenus: navigationConfig.courier,
+    },
+    {
+      name: "System Config",
+      hasSubMenu: true,
+      subMenus: navigationConfig.systemConfig,
+    },
   ];
 
   return (
@@ -47,9 +79,7 @@ const MainNavigationLayout = ({ children, onNavigate }) => {
           {mainMenuItems.map((item) => (
             <div key={item.name}>
               <button
-                onClick={() =>
-                  item.hasSubMenu && toggleMenu(item.name.toLowerCase())
-                }
+                onClick={() => item.hasSubMenu && toggleMenu(item.name)}
                 className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
                   item.hasSubMenu ? "cursor-pointer" : "cursor-default"
                 }`}
@@ -72,7 +102,9 @@ const MainNavigationLayout = ({ children, onNavigate }) => {
                         <button
                           className={`w-full px-6 py-2 text-left text-sm transition-colors ${
                             hasComponent
-                              ? "text-gray-900 font-semibold hover:bg-gray-100"
+                              ? currentPage === subMenu
+                                ? "text-blue-600 font-semibold bg-blue-50 border-r-2 border-blue-500"
+                                : "text-gray-900 font-semibold hover:bg-gray-100"
                               : "text-gray-400 cursor-not-allowed"
                           }`}
                           onClick={() =>

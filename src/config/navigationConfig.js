@@ -10,6 +10,14 @@ import BranchOrderDetailsReportPage from "../components/BranchOrderDetailsReport
 import ManageVaultBinsPage from "../components/ManageVaultBinsPage";
 import ManageDailyOrdersPage from "../components/ManageDailyOrdersPage";
 import ProductAndMailerVerificationPage from "../components/ProductAndMailerVerificationPage";
+import HandoverPage from "../components/HandoverPage";
+import DispatchVerificationPage from "../components/DispatchVerificationPage";
+import DispatchPage from "../components/DispatchPage";
+import SystemConfigPage from "../components/SystemConfigPage";
+import ClientConfigPage from "../components/ClientConfigPage";
+import CourierUsersPage from "../components/CourierUsersPage";
+import UsersPage from "../components/UsersPage";
+import CourierConfigPage from "../components/CourierConfigPage";
 
 // Map of page names to their components
 export const pageComponents = {
@@ -22,6 +30,13 @@ export const pageComponents = {
   "Manage Vault Bins": ManageVaultBinsPage,
   "Manage Daily Orders": ManageDailyOrdersPage,
   "Product and Mailer Verification": ProductAndMailerVerificationPage,
+  "Hand Over": HandoverPage,
+  "Dispatch Verification": DispatchVerificationPage,
+  Dispatch: DispatchPage,
+  "Courier Users": CourierUsersPage,
+  Users: UsersPage,
+  Clients: ClientConfigPage,
+  Couriers: CourierConfigPage,
 };
 
 // Navigation menu structure
@@ -52,9 +67,8 @@ export const navigationConfig = {
     "Nedbank Non-mailer Card Finder",
     "Administrator",
   ],
-  courier: [
-    // Courier functions - no pages implemented yet
-  ],
+  courier: ["Dispatch Verification", "Courier Users"],
+  systemConfig: ["Users", "Clients", "Couriers"],
 };
 
 // Helper function to check if a page has a component

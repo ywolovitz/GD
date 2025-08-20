@@ -6,6 +6,7 @@ import {
   ChevronRightIcon,
   CheckCircleIcon,
   ExclamationTriangleIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
@@ -18,6 +19,14 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
     check: 0,
     pack: 0,
     dispatch: 0,
+  });
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [updateFormData, setUpdateFormData] = useState({
+    courier: "",
+    deliveryNoteId: "",
+    quantity: "",
+    date: "",
   });
 
   // Mock data for work orders
@@ -32,13 +41,16 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
   ];
 
   // Mock data for products
-  const products = [
+  const [products, setProducts] = useState([
     {
       id: "43...",
       code: "EMD4",
       description: "EMD41205151800WE",
       quantity: 3040,
       done: 0,
+      courier: "",
+      deliveryNoteId: "",
+      updateDate: "",
     },
     {
       id: "43...",
@@ -46,6 +58,9 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
       description: "EMD71205151800WE",
       quantity: 1700,
       done: 0,
+      courier: "",
+      deliveryNoteId: "",
+      updateDate: "",
     },
     {
       id: "43...",
@@ -53,6 +68,9 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
       description: "EMD81205151800WE",
       quantity: 1460,
       done: 0,
+      courier: "",
+      deliveryNoteId: "",
+      updateDate: "",
     },
     {
       id: "43...",
@@ -60,6 +78,9 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
       description: "EMD91205151800WE",
       quantity: 271,
       done: 0,
+      courier: "",
+      deliveryNoteId: "",
+      updateDate: "",
     },
     {
       id: "43...",
@@ -67,8 +88,11 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
       description: "EME51205151800WE",
       quantity: 340,
       done: 0,
+      courier: "",
+      deliveryNoteId: "",
+      updateDate: "",
     },
-  ];
+  ]);
 
   // Set the first work order as selected by default
   React.useEffect(() => {
@@ -84,6 +108,8 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
     "Journal Details",
   ];
 
+  const couriers = ["CCD", "DSV", "FedEx", "DHL"];
+
   const handleDateChange = (e) => {
     setSelectedDate(e.target.value);
   };
@@ -96,8 +122,89 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
   };
 
   const handleUpdate = () => {
-    // Handle update logic here
-    console.log("Updating completion data:", completionData);
+    if (!selectedProduct) {
+      alert("Please select a product first");
+      return;
+    }
+
+    // Pre-populate quantity from the "Enter Completed" row
+    const totalCompleted = Object.values(completionData).reduce(
+      (sum, val) => sum + val,
+      0
+    );
+
+    setUpdateFormData({
+      courier: "",
+      deliveryNoteId: "",
+      quantity: totalCompleted.toString(),
+      date: new Date().toISOString().split("T")[0], // Today's date as default
+    });
+
+    setShowUpdateModal(true);
+  };
+
+  const handleConfirmUpdate = () => {
+    // Validate form data
+    if (
+      !updateFormData.courier ||
+      !updateFormData.deliveryNoteId ||
+      !updateFormData.quantity ||
+      !updateFormData.date
+    ) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    // Validate date is not in the future
+    const selectedDate = new Date(updateFormData.date);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999); // End of today
+
+    if (selectedDate > today) {
+      alert("Date cannot be in the future");
+      return;
+    }
+
+    // Update the selected product with the new data
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product === selectedProduct
+          ? {
+              ...product,
+              courier: updateFormData.courier,
+              deliveryNoteId: updateFormData.deliveryNoteId,
+              done: parseInt(updateFormData.quantity),
+              updateDate: updateFormData.date,
+            }
+          : product
+      )
+    );
+
+    console.log(
+      "Updating product:",
+      selectedProduct,
+      "with data:",
+      updateFormData
+    );
+
+    // Close modal and reset form
+    setShowUpdateModal(false);
+    setUpdateFormData({
+      courier: "",
+      deliveryNoteId: "",
+      quantity: "",
+      date: "",
+    });
+  };
+
+  const handleCancelUpdate = () => {
+    setShowUpdateModal(false);
+    setUpdateFormData({
+      courier: "",
+      deliveryNoteId: "",
+      quantity: "",
+      date: "",
+    });
   };
 
   const totalDownloaded = 3040;
@@ -259,11 +366,28 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
                         <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Done
                         </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Courier
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Delivery Note
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Update Date
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {products.map((product, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
+                        <tr
+                          key={index}
+                          className={`hover:bg-gray-50 cursor-pointer transition-colors ${
+                            selectedProduct === product
+                              ? "bg-blue-100 border-l-4 border-blue-500"
+                              : ""
+                          }`}
+                          onClick={() => setSelectedProduct(product)}
+                        >
                           <td className="px-4 py-2 text-sm text-gray-900">
                             {product.id}
                           </td>
@@ -278,6 +402,15 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
                           </td>
                           <td className="px-4 py-2 text-sm text-gray-900">
                             {product.done}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900">
+                            {product.courier || "-"}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900">
+                            {product.deliveryNoteId || "-"}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-900">
+                            {product.updateDate || "-"}
                           </td>
                         </tr>
                       ))}
@@ -436,6 +569,126 @@ const BulkWorkOrderProcessingPage = ({ onNavigate }) => {
             </div>
           </div>
         </div>
+
+        {/* Update Modal */}
+        {showUpdateModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Update Product Details
+                </h3>
+                <button
+                  onClick={handleCancelUpdate}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+              <div className="p-6">
+                {selectedProduct && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <h4 className="text-sm font-medium text-blue-900">
+                      Selected Product: {selectedProduct.code}
+                    </h4>
+                    <p className="text-xs text-blue-700 mt-1">
+                      Description: {selectedProduct.description}
+                    </p>
+                  </div>
+                )}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Courier
+                    </label>
+                    <select
+                      value={updateFormData.courier}
+                      onChange={(e) =>
+                        setUpdateFormData((prev) => ({
+                          ...prev,
+                          courier: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Select a courier...</option>
+                      {couriers.map((courier) => (
+                        <option key={courier} value={courier}>
+                          {courier}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Delivery Note ID
+                    </label>
+                    <input
+                      type="text"
+                      value={updateFormData.deliveryNoteId}
+                      onChange={(e) =>
+                        setUpdateFormData((prev) => ({
+                          ...prev,
+                          deliveryNoteId: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter delivery note ID..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      value={updateFormData.quantity}
+                      onChange={(e) =>
+                        setUpdateFormData((prev) => ({
+                          ...prev,
+                          quantity: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter quantity..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      value={updateFormData.date}
+                      onChange={(e) =>
+                        setUpdateFormData((prev) => ({
+                          ...prev,
+                          date: e.target.value,
+                        }))
+                      }
+                      max={new Date().toISOString().split("T")[0]}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3 px-6 py-4 border-t border-gray-200">
+                <button
+                  onClick={handleCancelUpdate}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmUpdate}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Confirm Update
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </MainNavigationLayout>
   );
